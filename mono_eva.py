@@ -112,13 +112,13 @@ if __name__ == '__main__':
 	re_points = np.asarray(get_points(res_time))
 	# print(type(ground_points))
 	rot,trans,trans_error,s = align(re_points, ground_points)
-	# print(rot)
+	print("rot={}, \ntrans={}".format(rot, trans))
 	re_fpoints = s*rot*re_points+trans
 	# print(re_fpoints[0])
-	# print(trans_error)
+	print(trans_error)
 	plt.figure()
-	plt.scatter(ground_points[0], ground_points[2], s=0.1)
-	plt.scatter(list(re_fpoints[0]), list(re_fpoints[2]), s=0.1, c='red')
+	plt.scatter(ground_points[0], ground_points[2], c="green", label="ground truth")
+	plt.scatter(list(re_fpoints[0]), list(re_fpoints[2]), c='blue', label="estimated")
 	aa = list(re_fpoints[0])
 	x = aa[0].tolist()
 	aa = list(re_fpoints[2])
@@ -132,8 +132,9 @@ if __name__ == '__main__':
 	print ("absolute_translational_error.min %f m"%np.min(trans_error))
 	print ("absolute_translational_error.max %f m"%np.max(trans_error))
 
-	# for num in range(len(ground_points[0])):
-	# 	plt.plot([ground_points[0][num], x[0][num]], [ground_points[2][num], y[0][num]], c = 'green')
-	
+	for num in range(len(ground_points[0])):
+		plt.plot([ground_points[0][num], x[0][num]], [ground_points[2][num], y[0][num]], c = 'red',label="difference")
+	plt.gca().set_aspect("auto")
+	plt.legend()
 	plt.show()
 
