@@ -84,7 +84,7 @@ def align(model,data):
 
 		s = float(dots/norms)		
 
-		# print ("scale: %f " % s) 
+		print ("scale: %f " % s) 
 		
 		trans = data_mean - s*rot * model_mean
 		
@@ -100,13 +100,13 @@ def align(model,data):
 
 if __name__ == '__main__':
 	#Path to the times.txt in KITTI dataset
-	ground_time = np.loadtxt('/dataset/sequences/00/times.txt')
+	ground_time = np.loadtxt('/home/levin/workspace/data/kitti/sequences/04/times.txt')
 	
 	#Path to the KeyFrameTrajectory.txt file
-	res_time = np.loadtxt('/KeyFrameTrajectory.txt')
+	res_time = np.loadtxt('/home/levin/workspace/ORB_SLAM2/temp/slam_result/data/KeyFrameTrajectory.txt')
 	
 	#Path to the ground truth file
-	ground_data = np.loadtxt('/dataset/poses/00.txt')
+	ground_data = np.loadtxt('/home/levin/workspace/data/kitti/data_odometry_poses/dataset/poses/04.txt')
 	data= gen_data(ground_time, res_time, ground_data)
 	ground_points = np.asarray(get_coo(data))
 	re_points = np.asarray(get_points(res_time))
@@ -116,6 +116,7 @@ if __name__ == '__main__':
 	re_fpoints = s*rot*re_points+trans
 	# print(re_fpoints[0])
 	# print(trans_error)
+	plt.figure()
 	plt.scatter(ground_points[0], ground_points[2], s=0.1)
 	plt.scatter(list(re_fpoints[0]), list(re_fpoints[2]), s=0.1, c='red')
 	aa = list(re_fpoints[0])
