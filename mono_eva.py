@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+import argparse
+
 def gen_data(ground_time, res_time, ground_data):
 	ground_time = ground_time
 	res_time = res_time
@@ -99,14 +101,23 @@ def align(model,data):
 
 
 if __name__ == '__main__':
+	parser = argparse.ArgumentParser(description='''
+    This script computes the absolute trajectory error from the ground truth trajectory and the estimated trajectory. 
+    ''')
+	parser.add_argument('ground_time', help='timestamp file for kitti ground truth trajectory')
+	parser.add_argument('ground_data', help='kitti ground truth trajectory')
+	parser.add_argument('res_time', help='kitti mono estimated trajectory')
+	
+	parser.add_argument('--verbose', help='print all evaluation data (otherwise, only the RMSE absolute translational error in meters after alignment will be printed)', action='store_true')
+	args = parser.parse_args()
 	#Path to the times.txt in KITTI dataset
-	ground_time = np.loadtxt('/home/levin/workspace/data/kitti/sequences/04/times.txt')
-	
-	#Path to the KeyFrameTrajectory.txt file
-	res_time = np.loadtxt('/home/levin/workspace/ORB_SLAM2/temp/slam_result/data/KeyFrameTrajectory.txt')
-	
+	ground_time = np.loadtxt(args.ground_time)
 	#Path to the ground truth file
-	ground_data = np.loadtxt('/home/levin/workspace/data/kitti/data_odometry_poses/dataset/poses/04.txt')
+	ground_data = np.loadtxt(args.ground_data)
+	#Path to the KeyFrameTrajectory.txt file
+	res_time = np.loadtxt(args.res_time)
+	
+	
 	data= gen_data(ground_time, res_time, ground_data)
 	ground_points = np.asarray(get_coo(data))
 	re_points = np.asarray(get_points(res_time))
@@ -123,14 +134,17 @@ if __name__ == '__main__':
 	x = aa[0].tolist()
 	aa = list(re_fpoints[2])
 	y = aa[0].tolist()
-
-	print ("compared_pose_pairs %d pairs"%(len(trans_error)))
-	print ("absolute_translational_error.rmse %f m"%np.sqrt(np.dot(trans_error,trans_error) / len(trans_error)))
-	print ("absolute_translational_error.mean %f m"%np.mean(trans_error))
-	print ("absolute_translational_error.median %f m"%np.median(trans_error))
-	print ("absolute_translational_error.std %f m"%np.std(trans_error))
-	print ("absolute_translational_error.min %f m"%np.min(trans_error))
-	print ("absolute_translational_error.max %f m"%np.max(trans_error))
+	
+	if args.verbose:
+		print ("compared_pose_pairs %d pairs"%(len(trans_error)))
+		print ("absolute_translational_error.rmse %f m"%np.sqrt(np.dot(trans_error,trans_error) / len(trans_error)))
+		print ("absolute_translational_error.mean %f m"%np.mean(trans_error))
+		print ("absolute_translational_error.median %f m"%np.median(trans_error))
+		print ("absolute_translational_error.std %f m"%np.std(trans_error))
+		print ("absolute_translational_error.min %f m"%np.min(trans_error))
+		print ("absolute_translational_error.max %f m"%np.max(trans_error))
+	else:
+		print ("absolute_translational_error.rmse %f m"%np.sqrt(np.dot(trans_error,trans_error) / len(trans_error)))
 
 	for num in range(len(ground_points[0])):
 		plt.plot([ground_points[0][num], x[0][num]], [ground_points[2][num], y[0][num]], c = 'red',label="difference")
