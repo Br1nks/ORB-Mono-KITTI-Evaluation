@@ -46,66 +46,66 @@ def get_points(data):
 
 
 def align(model,data):
-    """Align two trajectories using the method of Horn (closed-form).
-    
-    Input:
-    model -- first trajectory (3xn)
-    data -- second trajectory (3xn)
-    
-    Output:
-    rot -- rotation matrix (3x3)
-    trans -- translation vector (3x1)
-    trans_error -- translational error per point (1xn)
-    
-    """
-    np.set_printoptions(precision=3,suppress=True)
-    model_mean=[[model.mean(1)[0]], [model.mean(1)[1]], [model.mean(1)[2]]]
-    data_mean=[[data.mean(1)[0]], [data.mean(1)[1]], [data.mean(1)[2]]]
-    model_zerocentered = model - model_mean
-    data_zerocentered = data - data_mean
-    
-    W = np.zeros( (3,3) )
-    for column in range(model.shape[1]):
-        W += np.outer(model_zerocentered[:,column],data_zerocentered[:,column])
-    U,d,Vh = np.linalg.linalg.svd(W.transpose())
-    S = np.matrix(np.identity( 3 ))
-    if(np.linalg.det(U) * np.linalg.det(Vh)<0):
-        S[2,2] = -1
-    rot = U*S*Vh
+		"""Align two trajectories using the method of Horn (closed-form).
+		
+		Input:
+		model -- first trajectory (3xn)
+		data -- second trajectory (3xn)
+		
+		Output:
+		rot -- rotation matrix (3x3)
+		trans -- translation vector (3x1)
+		trans_error -- translational error per point (1xn)
+		
+		"""
+		np.set_printoptions(precision=3,suppress=True)
+		model_mean=[[model.mean(1)[0]], [model.mean(1)[1]], [model.mean(1)[2]]]
+		data_mean=[[data.mean(1)[0]], [data.mean(1)[1]], [data.mean(1)[2]]]
+		model_zerocentered = model - model_mean
+		data_zerocentered = data - data_mean
+		
+		W = np.zeros( (3,3) )
+		for column in range(model.shape[1]):
+				W += np.outer(model_zerocentered[:,column],data_zerocentered[:,column])
+		U,d,Vh = np.linalg.linalg.svd(W.transpose())
+		S = np.matrix(np.identity( 3 ))
+		if(np.linalg.det(U) * np.linalg.det(Vh)<0):
+				S[2,2] = -1
+		rot = U*S*Vh
 
-    rotmodel = rot*model_zerocentered
-    dots = 0.0
-    norms = 0.0
+		rotmodel = rot*model_zerocentered
+		dots = 0.0
+		norms = 0.0
 
-    for column in range(data_zerocentered.shape[1]):
-        dots += np.dot(data_zerocentered[:,column].transpose(),rotmodel[:,column])
-        normi = np.linalg.norm(model_zerocentered[:,column])
-        norms += normi*normi
+		for column in range(data_zerocentered.shape[1]):
+				dots += np.dot(data_zerocentered[:,column].transpose(),rotmodel[:,column])
+				normi = np.linalg.norm(model_zerocentered[:,column])
+				norms += normi*normi
 
-    s = float(dots/norms)    
+		s = float(dots/norms)		
 
-    # print ("scale: %f " % s) 
-    
-    trans = data_mean - s*rot * model_mean
-    
-    model_aligned = s*rot * model + trans
-    alignment_error = model_aligned - data
-    
-    trans_error = np.sqrt(np.sum(np.multiply(alignment_error,alignment_error),0)).A[0]
-        
-    return rot,trans,trans_error, s
+		# print ("scale: %f " % s) 
+		
+		trans = data_mean - s*rot * model_mean
+		
+		model_aligned = s*rot * model + trans
+		alignment_error = model_aligned - data
+		
+		trans_error = np.sqrt(np.sum(np.multiply(alignment_error,alignment_error),0)).A[0]
+				
+		return rot,trans,trans_error, s
 
 
 
 
 if __name__ == '__main__':
-  #Path to the times.txt in KITTI dataset
+	#Path to the times.txt in KITTI dataset
 	ground_time = np.loadtxt('/dataset/sequences/00/times.txt')
-  
-  #Path to the KeyFrameTrajectory.txt file
+	
+	#Path to the KeyFrameTrajectory.txt file
 	res_time = np.loadtxt('/KeyFrameTrajectory.txt')
-  
-  #Path to the ground truth file
+	
+	#Path to the ground truth file
 	ground_data = np.loadtxt('/dataset/poses/00.txt')
 	data= gen_data(ground_time, res_time, ground_data)
 	ground_points = np.asarray(get_coo(data))
@@ -135,5 +135,4 @@ if __name__ == '__main__':
 	# 	plt.plot([ground_points[0][num], x[0][num]], [ground_points[2][num], y[0][num]], c = 'green')
 	
 	plt.show()
-
 
