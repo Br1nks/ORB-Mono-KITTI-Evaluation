@@ -99,17 +99,7 @@ def align(model,data):
 
 
 
-
-if __name__ == '__main__':
-	parser = argparse.ArgumentParser(description='''
-    This script computes the absolute trajectory error from the ground truth trajectory and the estimated trajectory. 
-    ''')
-	parser.add_argument('ground_time', help='timestamp file for kitti ground truth trajectory')
-	parser.add_argument('ground_data', help='kitti ground truth trajectory')
-	parser.add_argument('res_time', help='kitti mono estimated trajectory')
-	
-	parser.add_argument('--verbose', help='print all evaluation data (otherwise, only the RMSE absolute translational error in meters after alignment will be printed)', action='store_true')
-	args = parser.parse_args()
+def exec_main(args):
 	#Path to the times.txt in KITTI dataset
 	ground_time = np.loadtxt(args.ground_time)
 	#Path to the ground truth file
@@ -146,11 +136,24 @@ if __name__ == '__main__':
 	else:
 		print ("absolute_translational_error.rmse %f m"%np.sqrt(np.dot(trans_error,trans_error) / len(trans_error)))
 
-# 	label="difference"
-# 	for num in range(len(ground_points[0])):
-# 		plt.plot([ground_points[0][num], x[0][num]], [ground_points[2][num], y[0][num]], c = 'red',label=label)
-# 		label=""
+	label="difference"
+	for num in range(len(ground_points[0])):
+		plt.plot([ground_points[0][num], x[0][num]], [ground_points[2][num], y[0][num]], c = 'red',label=label)
+		label=""
 	plt.gca().set_aspect("auto")
 	plt.legend()
 	plt.show()
+	return
+if __name__ == '__main__':
+	parser = argparse.ArgumentParser(description='''
+    This script computes the absolute trajectory error from the ground truth trajectory and the estimated trajectory. 
+    ''')
+	parser.add_argument('ground_time', help='timestamp file for kitti ground truth trajectory')
+	parser.add_argument('ground_data', help='kitti ground truth trajectory')
+	parser.add_argument('res_time', help='kitti mono estimated trajectory')
+	
+	parser.add_argument('--verbose', help='print all evaluation data (otherwise, only the RMSE absolute translational error in meters after alignment will be printed)', action='store_true')
+	args = parser.parse_args()
+	 
+	
 
