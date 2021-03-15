@@ -106,8 +106,8 @@ def exec_main(args):
 	ground_data = np.loadtxt(args.ground_data)
 	#Path to the KeyFrameTrajectory.txt file
 	res_time = np.loadtxt(args.res_time)
-	
-	
+	eval_data = args.eval_data
+
 	data= gen_data(ground_time, res_time, ground_data)
 	ground_points = np.asarray(get_coo(data))
 	re_points = np.asarray(get_points(res_time))
@@ -117,7 +117,7 @@ def exec_main(args):
 	re_fpoints = s*rot*re_points+trans
 	# print(re_fpoints[0])
 	print(trans_error)
-	plt.figure()
+	fig=plt.figure()
 	plt.scatter(ground_points[0], ground_points[2], c="green", label="ground truth")
 	plt.scatter(list(re_fpoints[0]), list(re_fpoints[2]), c='blue', label="estimated")
 	aa = list(re_fpoints[0])
@@ -143,7 +143,40 @@ def exec_main(args):
 	plt.gca().set_aspect("auto")
 	plt.legend()
 	plt.show()
+
+	saveResultsToFile(eval_data, fig, rot, trans, trans_error, s)
 	return
+
+def saveResultsToFile(eval_data, fig, rot, trans, trans_error, s):
+	# save figure and calculated translational error data to file for later analysis
+	fig.savefig(eval_data+'png')
+	with open(eval_data+'_errorData.txt', 'ab') as f:
+		f.truncate(0) # remove previous file contents
+
+		f.write('Scale = {} \n'.format(s))
+
+		f.write('rot = \n')
+		np.savetxt(f,rot,'%.2f',', ')
+		f.write('\n')
+
+		f.write('trans = \n')
+		np.savetxt(f, trans, '%.2f', ', ')
+		f.write('\n')
+
+		f.write('Matrix of Translational error: \n')
+		np.savetxt(f,trans_error,'%.2f', ', ', '; ')
+		f.write('\n')
+
+		f.write("compared_pose_pairs: %d pairs \n"%(len(trans_error)))
+		f.write("absolute_translational_error.rmse: %f m \n"%np.sqrt(np.dot(trans_error,trans_error) / len(trans_error)))
+		f.write("absolute_translational_error.mean: %f m \n"%np.mean(trans_error))
+		f.write("absolute_translational_error.median: %f m \n"%np.median(trans_error))
+		f.write("absolute_translational_error.std: %f m \n"%np.std(trans_error))
+		f.write("absolute_translational_error.min: %f m \n"%np.min(trans_error))
+		f.write("absolute_translational_error.max: %f m \n"%np.max(trans_error))
+		f.write("absolute_translational_error.rmse: %f m \n"%np.sqrt(np.dot(trans_error,trans_error) / len(trans_error)))
+
+	
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='''
     This script computes the absolute trajectory error from the ground truth trajectory and the estimated trajectory. 

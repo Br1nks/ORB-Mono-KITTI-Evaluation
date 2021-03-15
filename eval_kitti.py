@@ -17,9 +17,10 @@ class Eval_Kitti(object):
         args = parser.parse_args()
         
         seq = args.seq
-        args.ground_time = '/home/levin/workspace/data/kitti/sequences/{}/times.txt'.format(seq)  
-        args.ground_data = '/home/levin/workspace/data/kitti/data_odometry_poses/dataset/poses/{}.txt'.format(seq)    
-        args.res_time = '/home/levin/workspace/ORB_SLAM2/temp/slam_result/data/{}/KeyFrameTrajectory.txt'.format(seq)  
+        args.ground_time = '../Datasets/KITTI/dataset/sequences/{}/times.txt'.format(seq)  
+        args.ground_data = '../Datasets/KITTI/dataset/poses/{}.txt'.format(seq)    
+        args.res_time = '../ORB_SLAM3/outputs/mono-{}-KeyFrameTrajectory.txt'.format(seq)  
+	args.eval_data = 'evaluation/{}_eval'.format(seq)
         args.verbose = True
         exec_main(args)
         return
