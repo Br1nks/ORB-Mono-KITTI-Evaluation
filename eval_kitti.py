@@ -22,8 +22,8 @@ class Eval_Kitti(object):
         seq = args.seq
         args.ground_time = '../Datasets/KITTI/dataset/sequences/{}/times.txt'.format(seq)  
         args.ground_data = '../Datasets/KITTI/dataset/poses/{}.txt'.format(seq)    
-        args.res_time = '../ORB_SLAM3/outputs/mono-{}-KeyFrameTrajectory.txt'.format(seq)  
-	args.eval_data = 'Evaluation-results/{}_eval'.format(seq)
+        args.res_time = '../ORB_SLAM3/outputs/Mono/mono-{}-KeyFrameTrajectory.txt'.format(seq)  
+	    args.eval_data = 'Evaluation-results/{}_eval'.format(seq)
         args.verbose = True
         exec_main(args)
         return
