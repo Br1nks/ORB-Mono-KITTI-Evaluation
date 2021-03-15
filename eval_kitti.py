@@ -3,11 +3,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import argparse
-
+import os
 
 
 class Eval_Kitti(object):
     def __init__(self):
+	DIR_NAME = 'Evaluation-results'
+	if not os.path.isdir(DIR_NAME):
+		os.mkdir(DIR_NAME)
         return 
     def run(self):
         parser = argparse.ArgumentParser(description='''
@@ -20,7 +23,7 @@ class Eval_Kitti(object):
         args.ground_time = '../Datasets/KITTI/dataset/sequences/{}/times.txt'.format(seq)  
         args.ground_data = '../Datasets/KITTI/dataset/poses/{}.txt'.format(seq)    
         args.res_time = '../ORB_SLAM3/outputs/mono-{}-KeyFrameTrajectory.txt'.format(seq)  
-	args.eval_data = 'evaluation/{}_eval'.format(seq)
+	args.eval_data = 'Evaluation-results/{}_eval'.format(seq)
         args.verbose = True
         exec_main(args)
         return

@@ -149,7 +149,7 @@ def exec_main(args):
 
 def saveResultsToFile(eval_data, fig, rot, trans, trans_error, s):
 	# save figure and calculated translational error data to file for later analysis
-	fig.savefig(eval_data+'png')
+	fig.savefig(eval_data)
 	with open(eval_data+'_errorData.txt', 'ab') as f:
 		f.truncate(0) # remove previous file contents
 
